@@ -39,7 +39,11 @@ export default function DeliveryDashboard() {
             const {data} = await axios.get(`${API_URL}/delivery/my-deliveries?status=${tab}`,getAuthHeaders())
             setOrders(data.orders)
         } catch (error) {
-            toast.error(error?.response?.data?.message || "failed to load deliveries");
+            if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Failed to load deliveries");
+    } else {
+        toast.error("Failed to load deliveries");
+    }
             
         }finally{
             setLoading(false)
@@ -98,7 +102,11 @@ export default function DeliveryDashboard() {
             toast.success(`Status updated to ${status}`)
             fetchOrders();
         } catch (error:any) {
-            toast.error(error?.response?.data?.message || "Failed");
+            if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Failed");
+    } else {
+        toast.error("Failed");
+    }
 
             
         }
@@ -113,7 +121,13 @@ export default function DeliveryDashboard() {
             setOtpModal(null);
             setOtp("");
         } catch (error:any) {
-            toast.error(error?.response?.data?.message || error?.message);
+            if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || error.message);
+    } else if (error instanceof Error) {
+        toast.error(error.message);
+    } else {
+        toast.error("Delivery failed");
+    }
             
         }finally{
             setSubmitting(false)
@@ -130,7 +144,13 @@ export default function DeliveryDashboard() {
             setCancelReason("");
             fetchOrders();
         } catch (error:any) {
-            toast.error(error?.response?.data?.message || error?.message);
+            if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || error.message);
+    } else if (error instanceof Error) {
+        toast.error(error.message);
+    } else {
+        toast.error("Cancellation failed");
+    }
             
         }finally{
             setSubmitting(false)

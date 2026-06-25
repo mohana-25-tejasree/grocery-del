@@ -4,7 +4,7 @@ import { heroSectionData } from "../../assets/assets";
 import api from "../../config/api";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-
+import axios from "axios";
 export default function DeliveryLogin() {
     const navigate = useNavigate()
     const [email, setEmail] = useState("");
@@ -21,7 +21,13 @@ export default function DeliveryLogin() {
             toast.success("Login successful")
             navigate('/delivery')
         } catch (error) {
-            toast.error(error?.response?.data?.message || error?.message);
+            if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || error.message);
+    } else if (error instanceof Error) {
+        toast.error(error.message);
+    } else {
+        toast.error("Login failed");
+    }
             
         }finally{
             setLoading(false)

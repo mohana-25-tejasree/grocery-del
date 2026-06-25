@@ -55,7 +55,11 @@ const OrderTracking = () => {
   },[id,order?.status])
 
   if (loading) return <Loading />
-  if (!order) null
+  if (!order) {
+  return <Loading />;
+// or
+// return <div>Order not found</div>;
+}
 
 
 
@@ -67,11 +71,11 @@ const OrderTracking = () => {
         </button>
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-semibold text-app-green">Order #{order!.id.slice(-8).toUpperCase()}</h1>
-            <p className="text-sm text-app-text-light">Placed on {new Date(order!.createdAt).toLocaleDateString("en-Us",{month:"long",day:"numeric" , year : "numeric"})}</p>
+            <h1 className="text-2xl font-semibold text-app-green">Order #{order.id.slice(-8).toUpperCase()}</h1>
+            <p className="text-sm text-app-text-light">Placed on {new Date(order.createdAt).toLocaleDateString("en-Us",{month:"long",day:"numeric" , year : "numeric"})}</p>
           </div>
           <span className={`px-4 py-1.5 text-sm font-semibold rounded-full ${order.status === "Delivered"? "bg-green-100 text-green-700": order.status === "Cancelled" ? "bg-red-100 text-red-700" : "bg-app-orange/10 text-app-orange"}`}>
-            {order!.status}
+            {order.status}
           </span>
         </div>
         <div className="grid lg:grid-cols-3 gap-6">
@@ -79,7 +83,7 @@ const OrderTracking = () => {
             <OrderOTP order={order} />
             <LiveMap order={order} liveLocation={liveLocation} />
             <OrderTimeLine order={order} />
-            {order?.deliveryPartner && order.status !== "Delivered" && order.status !== "Cacelled" && (
+            {order?.deliveryPartner && order.status !== "Delivered" && order.status !== "Cancelled" && (
               <div className="bg-white rounded-2xl p-5 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-app-green flex items-center justify-center">

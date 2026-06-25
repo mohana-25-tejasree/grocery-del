@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import type { Product } from "../types";
-import { dummyAddressData, dummyProducts } from "../assets/assets";
+
 import Loading from "../components/Loading";
 import { ArrowLeftIcon, ArrowRightIcon, HomeIcon, LeafIcon, MinusIcon, PlusIcon, ShoppingCartIcon, StarIcon } from "lucide-react";
 import { useCart } from "../context/CartContext";

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom"
 import { useCart } from "../context/CartContext";
-import { dummyAddressData } from "../assets/assets";
+
 import type { Address } from "../types";
-import { ArrowLeft, CheckIcon, ChevronRightIcon, ChevronsRightIcon, CreditCardIcon, Key, MapPinIcon } from "lucide-react";
+import { ArrowLeft, CheckIcon, ChevronRightIcon, CreditCardIcon, MapPinIcon } from "lucide-react";
 import CheckoutAddress from "../components/Checkout/CheckoutAddress";
 import CheckoutPayment from "../components/Checkout/CheckoutPayment";
 import CheckoutReview from "../components/Checkout/CheckoutReview";

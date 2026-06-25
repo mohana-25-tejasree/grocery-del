@@ -1,8 +1,6 @@
-import { XIcon } from "lucide-react"
-import { categoriesData } from "../assets/assets"
 
 
-const FilterPanel = ({categories, category, minPrice, maxPrice, updateFilter, clearFilters,hasFilters} : any) => {
+const FilterPanel = ({categories, category, minPrice, updateFilter, clearFilters,hasFilters} : any) => {
 
     const categoriesWithAll = [{slug : "", name : "All Categories"}, ...categories]
   return (

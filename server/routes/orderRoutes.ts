@@ -9,7 +9,7 @@ orderRouter.post('/',auth,createOrder);
 orderRouter.get('/',auth,getUserOrders);
 orderRouter.get('/all',auth,admin,getAllOrders);
 orderRouter.get('/:id',auth,getOrder);
-orderRouter.get('/:id/status',auth,admin,updateOrderStatus);
+orderRouter.put('/:id/status',auth,admin,updateOrderStatus);
 orderRouter.put('/:id/location',auth,getOrderLocation);
 
 export default orderRouter

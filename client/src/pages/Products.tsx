@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom"
 import type { Product } from "../types";
-import { categoriesData, dummyProducts } from "../assets/assets";
+import { categoriesData } from "../assets/assets";
 import { ChevronDown, Home, SlidersHorizontal } from "lucide-react";
 import ProductCard from "../components/ProductCard";
 import Loading from "../components/Loading";
 import FilterPanel from "../components/FilterPanel";
+import api from "../config/api";
+import toast from "react-hot-toast";
 
 
 const Products = () => {
@@ -13,7 +15,7 @@ const Products = () => {
   const[products , setProducts] = useState<Product[]>([])
   const[totalPages , setTotalPages] = useState(1)
   const [loading , setLoading] = useState(true);
-  const [mobileFiltersOpen , setMobileFiltersOpen] = useState(false)
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
 
   const category = searchParams.get("category") || "";
   const organic = searchParams.get("organic") || "";
@@ -24,8 +26,25 @@ const Products = () => {
 
   const fetchProducts = async ()=>{
     setLoading(true)
-    setProducts(dummyProducts.filter((p)=>p.category === category || category === ""));
-    setLoading(false)
+    try {
+      const params = new URLSearchParams()
+      if (category) params.set('category',category)
+      if (organic) params.set('category',organic)
+      if (sort) params.set('sort',sort)
+      if (maxPrice) params.set('maxPrice',maxPrice)
+        params.set("page",String(page))
+        params.set("limit","12")
+
+        const {data} = await api.get(`/products?${params.toString()}`);
+        setProducts(data.products)
+        setTotalPages(data.pages)
+    } catch (error) {
+      toast.error(error?.response?.data?.message || error?.message);
+      
+    }finally{
+      setLoading(false)
+    }
+    
   }
 
   const updateFilter = (key: string , value : string) => {
@@ -101,7 +120,7 @@ const Products = () => {
             ):(
               <div className="grid grid=cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 xl:gap-8">
                 {products.map((product)=>product.stock >0 && (
-                  <ProductCard key={product._id} product={product} />
+                  <ProductCard key={product.id} product={product} />
                 ))}
 
               </div>

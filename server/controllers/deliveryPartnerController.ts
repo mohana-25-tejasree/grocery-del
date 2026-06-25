@@ -74,7 +74,7 @@ export const completeDelivery = async (req:Request,res:Response) =>{
         return res.status(400).json({message:"Invalid Request"})
     }
 
-    if (order.deliveryOtp ! == otp){
+    if (order.deliveryOtp !== otp){
         return res.status(500).json({message:"Invalid OTP"})
     }
     const history = order.statusHistory as any[];
@@ -103,7 +103,7 @@ export const cancelDelivery = async (req:Request,res:Response) =>{
 
     const updatedOrder = await prisma.order.update({
         where:{id:order!.id},
-        data:{status:"Delivered",statusHistory:history}
+        data:{status:"cancelled",statusHistory:history}
     })
     res.json({order:updatedOrder , message:"Delivery Cancelled"})
 }
@@ -111,7 +111,7 @@ export const cancelDelivery = async (req:Request,res:Response) =>{
 export const updateDeliveryStatus = async (req:Request , res: Response) =>{
 
     const {status} = req.body;
-    const allowedStatuses = ["Packed","Out for Deliery"];
+    const allowedStatuses = ["Packed","Out for Delivery"];
 
     if(!allowedStatuses.includes(status)){
         return res.status(400).json({message :"Invalid status update"});

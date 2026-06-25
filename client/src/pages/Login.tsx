@@ -3,6 +3,8 @@ import { heroSectionData } from "../assets/assets"
 
 import { Link } from "react-router-dom"
 import { BikeIcon, Loader2Icon, LockIcon, MailIcon, UserIcon } from "lucide-react"
+import { useAuth } from "../context/AuthContext"
+import toast from "react-hot-toast"
 
 
 const Login = () => {
@@ -12,11 +14,25 @@ const Login = () => {
   const [password,setPassword]=useState("")
   const [loading,setLoading]=useState(false)
 
+  const {login,register}=useAuth()
+
 
   const handleSubmit = async (e: React.SubmitEvent)=>{
     e.preventDefault()
     setLoading(true);
-    setTimeout(()=>window.location.href = "/",1000)
+    try {
+      if(isLoginState){
+        await login(email,password)
+      }else{
+        await register(name,email,password)
+      }
+      
+    } catch (error:any) {
+      toast.error(error.response?.data?.message || error?.message);
+      
+    }finally{
+      setLoading(false)
+    }
   }
 
 
@@ -77,8 +93,8 @@ const Login = () => {
                   <MailIcon className="absolute left-3.5 top-1/2-translate-y-1/2 size-4 text-app-text-light"/>
                   <input 
                   type="text"
-                  value={name} 
-                  onChange={(e)=>setName(e.target.value)}
+                  value={email} 
+                  onChange={(e)=>setEmail(e.target.value)}
                   required 
                   placeholder="you@example.com" 
                   className="w-full h-full pl-11 pr-4 text-sm bg-white rounded-xl border border-app-border focus:outline-none focus:border-app-green transition-all"/>
@@ -92,8 +108,8 @@ const Login = () => {
                   <LockIcon className="absolute left-3.5 top-1/2-translate-y-1/2 size-4 text-app-text-light"/>
                   <input 
                   type="text"
-                  value={name} 
-                  onChange={(e)=>setName(e.target.value)}
+                  value={password} 
+                  onChange={(e)=>setPassword(e.target.value)}
                   required 
                   placeholder="********" 
                   className="w-full h-full pl-11 pr-4 text-sm bg-white rounded-xl border border-app-border focus:outline-none focus:border-app-green transition-all"/>

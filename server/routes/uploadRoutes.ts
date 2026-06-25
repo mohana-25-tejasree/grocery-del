@@ -25,7 +25,9 @@ uploadRouter.post('/',auth,upload.single('image'),async(req, res)=>{
 
         
     } catch (error:any) {
-        res.status(500).json({message:error.message})
+        console.log("UPLOAD ERROR");
+        console.log(error);
+        res.status(500).json({message:error.message,error});
         
     }
 

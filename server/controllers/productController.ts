@@ -30,7 +30,7 @@ export const getProducts = async (req: Request, res: Response) =>{
     const orderBy : any ={};
     if(sort === "price-low") orderBy.price = 'asc'
     else if(sort === "price-high" ) orderBy.price='desc'
-    else orderBy.createAt='desc'
+    else orderBy.createdAt='desc'
 
     const products = await prisma.product.findMany({where,orderBy})
 
@@ -68,8 +68,8 @@ export const updateProduct = async (req: Request, res: Response) =>{
 }
 
 export const deleteProduct = async (req: Request, res: Response) =>{
-    await prisma.product.delete({where :{id:req.params.id as string}})
-    res.json({message:"Deleted"})
+    await prisma.product.update({where :{id:req.params.id as string},data:{stock :Number(0)}})
+    res.json({message:"product updated"})
 }
 
 

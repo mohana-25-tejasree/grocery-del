@@ -4,6 +4,7 @@ import type { DeliveryPartner } from "../../types";
 import Loading from "../../components/Loading";
 import api from "../../config/api";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 
 export default function AdminDeliveryPartners() {
@@ -19,7 +20,11 @@ export default function AdminDeliveryPartners() {
             setPartners(data.partners)
             
         } catch (error:any) {
-            toast.error(error?.response?.data?.message || "Failed");
+            if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Failed");
+    } else {
+        toast.error("Failed");
+    }
             
         }finally{
             setLoading(false)
@@ -40,7 +45,11 @@ export default function AdminDeliveryPartners() {
             setForm({name:"",email:"",password:"",phone:"",vehicleType:"bike"});
             fetchPartners();
         } catch (error:any) {
-            toast.error(error?.response?.data?.message || "Failed");
+            if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Failed");
+    } else {
+        toast.error("Failed");
+    }
             
         }finally{
             setSaving(false)
@@ -54,7 +63,11 @@ export default function AdminDeliveryPartners() {
             toast.success(isActive?"Partner deactivated":"Partner Activated");
             fetchPartners();
         } catch (error) {
-            toast.error(error?.response?.data?.message || "failed");
+            if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Failed");
+    } else {
+        toast.error("Failed");
+    }
             
         }
     };

@@ -8,6 +8,7 @@ import Loading from "../components/Loading";
 import FilterPanel from "../components/FilterPanel";
 import api from "../config/api";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 
 const Products = () => {
@@ -15,12 +16,12 @@ const Products = () => {
   const[products , setProducts] = useState<Product[]>([])
   const[totalPages , setTotalPages] = useState(1)
   const [loading , setLoading] = useState(true);
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
+  const [, setMobileFiltersOpen] = useState(false)
 
   const category = searchParams.get("category") || "";
   const organic = searchParams.get("organic") || "";
   const sort = searchParams.get("sort") || "";
-  const page = Number(searchParams.get("page")) || "";
+  const page = Number(searchParams.get("page") ?? "1");
   const minPrice = searchParams.get("minPrice") || "";
   const maxPrice = searchParams.get("maxPrice") || "";
 
@@ -29,8 +30,9 @@ const Products = () => {
     try {
       const params = new URLSearchParams()
       if (category) params.set('category',category)
-      if (organic) params.set('category',organic)
+      if (organic) params.set('organic',organic)
       if (sort) params.set('sort',sort)
+      if (minPrice) params.set("minPrice", minPrice)
       if (maxPrice) params.set('maxPrice',maxPrice)
         params.set("page",String(page))
         params.set("limit","12")
@@ -39,7 +41,13 @@ const Products = () => {
         setProducts(data.products)
         setTotalPages(data.pages)
     } catch (error) {
-      toast.error(error?.response?.data?.message || error?.message);
+      if (axios.isAxiosError(error)) {
+    toast.error(error.response?.data?.message || error.message);
+  } else if (error instanceof Error) {
+    toast.error(error.message);
+  } else {
+    toast.error("Failed to load products");
+  }
       
     }finally{
       setLoading(false)
@@ -90,19 +98,19 @@ const Products = () => {
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h1 className="text-2xl font-semibold text-app-green">{activeCategory ? activeCategory.name : "All Products" }</h1>
-                <p className="text-sm text-app-text-light mt-0.5">{products.length}Products found</p>
+                <p className="text-sm text-app-text-light mt-0.5">{products.length} Products found</p>
               </div>
               <div className="flex flex-col lg:items-center gap-3">
                 <button onClick={()=>setMobileFiltersOpen(true)} className="lg:hidden flex items-center gap-2 px-3 py-2 text-sm bg-white rounded-xl border border-app-border hover:bg-app-cream transition-colors">
                   <SlidersHorizontal className="size-4" />
                 </button>
                 <div className="relative">
-                  <select value={sort} onChange={(e)=>updateFilter("sort",e.target.value)} className="appearance-none pl-3 pr-8 py-2 text-sm bg-white rounded-xl border border-app-border focus:border-app-greem outline-none cursor-pointer">
+                  <select value={sort} onChange={(e)=>updateFilter("sort",e.target.value)} className="appearance-none pl-3 pr-8 py-2 text-sm bg-white rounded-xl border border-app-border focus:border-app-green outline-none cursor-pointer">
                     <option value="">Newest</option>
                     <option value="price_asc">Price: Low → High </option>
                     <option value="price_desc">Price: High → Low</option>
                     <option value="rating">Top Rated</option>
-                    <option value="name"> A → Z </option>➜
+                    <option value="name"> A → Z </option>
                   </select>
                   <ChevronDown className="absolute right-2.5 top-1/2 translate-y-1/2 w-3.5 h-3.5 text-app-text-light pointer-events-none" />
                 </div>
@@ -113,12 +121,12 @@ const Products = () => {
               <Loading />
             ): products.length ==0 ? (
               <div className="text-center py-16">
-                <p className="text-lg font-semibold text-app-green mb-2">No producs found</p>
+                <p className="text-lg font-semibold text-app-green mb-2">No products found</p>
                 <p className="text-sm text-app-text-light mb-4">Try adjusting your filters or search terms</p>
                 <button onClick={clearFilters} className="px-5 py-2 text-sm font-medium bg-app-green text-white rounded-xl hover:bg-app-green-light transition-colors">Clear Filters</button>
               </div>
             ):(
-              <div className="grid grid=cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 xl:gap-8">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 xl:gap-8">
                 {products.map((product)=>product.stock >0 && (
                   <ProductCard key={product.id} product={product} />
                 ))}
@@ -128,7 +136,7 @@ const Products = () => {
             {totalPages >1 && (
               <div className="flex-center gap-2 mt-16">
                 {Array.from({length :totalPages}).map((_,i)=>(
-                  <button key={i} onClick={()=>{updateFilter("page",String(i+1)); scrollTo(0,0)}} className={`size-9 roundded-lg text-sm font-medium transition-colors ${page === i+1 ? "bg-app-green text-white":"bg-white text-app-text-light hover:bg-app-cream"}`}>
+                  <button key={i} onClick={()=>{updateFilter("page",String(i+1)); scrollTo(0,0)}} className={`size-9 rounded-lg text-sm font-medium transition-colors ${page === i+1 ? "bg-app-green text-white":"bg-white text-app-text-light hover:bg-app-cream"}`}>
                     {i+1}
                   </button>
                 ))}

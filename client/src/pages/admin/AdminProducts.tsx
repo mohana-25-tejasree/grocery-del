@@ -5,6 +5,7 @@ import type { Product } from "../../types";
 import Loading from "../../components/Loading";
 import api from "../../config/api";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 
 export default function AdminProducts() {
@@ -20,7 +21,13 @@ export default function AdminProducts() {
             setProducts(data.products)
             
         } catch (error) {
-            toast.error(error.response?.data?.message || error?.message)
+            if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || error.message);
+    } else if (error instanceof Error) {
+        toast.error(error.message);
+    } else {
+        toast.error("Failed to fetch products");
+    }
             
         }finally{
             setLoading(false)
@@ -39,7 +46,12 @@ export default function AdminProducts() {
             fetchProducts();
             
         } catch (error:any) {
-            toast.error(error.response?.data?.message || "Failed to update product");
+            if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Failed to update product");
+    } else {
+        toast.error("Failed to update product");
+    }
+
             
         }
     };
